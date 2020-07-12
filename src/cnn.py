@@ -10,7 +10,7 @@ import dataset
 import pandas as pd
 import sys
 
-sys.path.insert(0, '/home/abhi/FD-CNN/utils/')
+sys.path.insert(0, '../utils/')
 import transform
 
 MODEL_SEVE_PATH = '../model/model.ckpt'
