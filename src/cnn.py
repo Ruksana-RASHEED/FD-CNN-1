@@ -1,7 +1,7 @@
 # -*- coding:UTF-8 -*-
 
 '''
-CNN模型
+CNN Model
 '''
 import time
 import numpy as np
@@ -20,7 +20,7 @@ MODEL_SEVE_PATH = '../model/model.ckpt'
 Label = {0:'Fall',1:'Stand',2:'Walk',3:'Jog',4:'Jump',5:'up_stair',6:'down_stair',
          7:'stand2sit',8:'sitting',9:'sit2stand',10:'CSI',11:'CSO',12:'LYI'}
 
-# 超参数
+# Hyperparameter
 CLASS_LIST = [0,2,3,4,5,6,7,9]
 CLASS_NUM = len(CLASS_LIST)
 LEARNING_RATE = 0.001
@@ -29,7 +29,7 @@ BATCH_SIZE = 50
 
 def wights_variable(shape):
     '''
-    权重变量tensor
+    Weight variable tensor
     :param shape:
     :return:
     '''
@@ -38,7 +38,7 @@ def wights_variable(shape):
 
 def biases_variable(shape):
     '''
-    偏置变量tensor
+    Bias variable tensor
     :param shape:
     :return:
     '''
@@ -47,26 +47,26 @@ def biases_variable(shape):
 
 def conv2d(x,kernel):
     '''
-    网络卷积层
-    :param x: 输入x
-    :param kernel: 卷积核
-    :return: 返回卷积后的结果
+    Network convolution layer
+    :param x: Enter x
+    :param kernel: Convolution kernel
+    :return: Return the result after convolution
     '''
     return tf.nn.conv2d(x,kernel,strides=[1,1,1,1],padding='SAME')
 
 def max_pooling_2x2(x):
     '''
-    最大赤化层
-    :param x: 输入x
-    :return: 返回池化后数据
+    Maximum reddish layer
+    :param x: Enter x
+    :return: Return pooled data
     '''
     return tf.nn.max_pool(x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
 
 def lrn(x):
     '''
     local response normalization
-    局部响应归一化,可以提高准确率
-    :param x: 输入x
+    Normalized local response can improve accuracy
+    :param x: Enter x
     :return:
     '''
 
@@ -75,8 +75,8 @@ def lrn(x):
 
 def fall_net(x):
     '''
-    跌到检测网络
-    :param x: 输入tensor,shape=[None,]
+    Fell to detection network
+    :param x: Enter tensor,shape=[None,]
     :return:
     '''
 
@@ -127,8 +127,8 @@ def fall_net(x):
 
 def train_model():
     '''
-    训练模型,并将训练的模型参数进行保存
-    :return: 返回训练好模型参数
+    Train the model and save the trained model parameters
+    :return: Return the trained model parameters
     '''
     with tf.name_scope('input_dataset'):
         x = tf.placeholder(tf.float32,[None,1200])
@@ -161,7 +161,7 @@ def train_model():
             batch_x, batch_y = data.next_batch(BATCH_SIZE)
             if step%100==0:
                 train_accuracy = accuracy.eval(feed_dict={x: batch_x, y: batch_y, keep_prob: 1.0})
-                print('训练第 %d次, 准确率为 %f' % (step, train_accuracy))
+                print('Training %d times, the accuracy rate is %f' % (step, train_accuracy))
                 summ = sess.run(merged, feed_dict={x: batch_x, y: batch_y,keep_prob: 1.0})
                 train_writer.add_summary(summ, global_step=step)
 
@@ -169,12 +169,12 @@ def train_model():
 
         train_writer.close()
         save_path = saver.save(sess, MODEL_SEVE_PATH)
-        print("训练完毕,权重保存至:%s"%(save_path))
+        print("After training, the weights are saved to:%s"%(save_path))
 
 def test_model():
     '''
-    使用测试数据集对训练好的模型进行测试
-    :return: 测试结果
+    Use the test data set to test the trained model
+    :return: Test Results
     '''
     data = dataset.DataSet('../data/dataset', CLASS_LIST, True)
     test_x, test_y = data.get_test_data()
@@ -196,10 +196,10 @@ def test_model():
     with tf.Session() as sess:
         saver.restore(sess, "../model/model.ckpt")
         p_y = np.argmax(sess.run(y_,feed_dict={x: test_x,keep_prob: 1.0}),1)
-        print("准确率为 %f" % accuracy.eval(feed_dict={x: test_x, y: test_y, keep_prob: 1.0}))
+        print("Accuracy rate %f" % accuracy.eval(feed_dict={x: test_x, y: test_y, keep_prob: 1.0}))
 
     test_time = str(time.time() - start_time)
-    print('测试时间为：',test_time)
+    print('Test time is：',test_time)
 
     g_truth = np.argmax(test_y,1)
     avg_sensitivity = 0
