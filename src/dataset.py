@@ -1,12 +1,12 @@
 # -*- coding:UTF-8 -*-
 
 '''
-需求:输入batchsize.输出batchsize大小的batch_x(跌倒或日常数据)以及
-    对应的label值batch_y.一个label格式[跌倒bool,日常bool].
-    例如:一份跌倒数据的label为[1,0].日常数据的label为[0,1]
+Requirement: input batchsize. output batchsize size batch_x (fall or daily data) and
+     Corresponding label value batch_y. A label format [falling bool, daily bool].
+     For example: the label of a piece of falling data is [1,0]. The label of daily data is [0,1]
 
-    Dataset类,构造(数据文件夹路径,分类)
-    例如:[0,1,2]代表:'FALL','STD','WAL'
+     Dataset class, structure (data folder path, classification)
+     For example: [0,1,2] means:'FALL','STD','WAL'
 '''
 
 import os
@@ -18,7 +18,7 @@ TRAIN_DATA = '../data/train.csv'
 TEST_DATA = '../data/test.csv'
 
 class DataSet:
-    # 定义私有属性
+    # Define private properties
     _train_x = []
     _train_y = []
     _test_x = []
@@ -27,7 +27,7 @@ class DataSet:
     _epochs_completed = 0
     _num_examples = 0
 
-    # 定义构造方法
+    # Define the construction method
     def __init__(self,data_path,class_list,TEST_MODEL=False):
         class_num = len(class_list)
 
@@ -37,9 +37,9 @@ class DataSet:
                 label = all_data.iloc[i, 0]
                 if label not in class_list:
                     continue
-                # 提取传感器数据
+                # Extract sensor data
                 self._test_x.append(all_data.iloc[i, 1:1201])
-                # 创建y
+                # Create y
                 loc = class_list.index(label)
                 y = [0 for _ in range(class_num)]
                 y[loc] = 1
@@ -50,7 +50,7 @@ class DataSet:
 
             for f in fs:
                 file_path = os.path.join(data_path, f)
-                # 读取所有csv文件
+                # Read all csv files
                 if 'csv' in f:
                     data = pd.read_csv(file_path, index_col=False)
                     all_data = all_data.append(data)
@@ -81,9 +81,9 @@ class DataSet:
                 label = all_data.iloc[i, 0]
                 if label not in class_list:
                     continue
-                # 提取传感器数据
+                # Extract sensor data
                 self._test_x.append(all_data.iloc[i, 1:1201])
-                # 创建y
+                # Create y
                 loc = class_list.index(label)
                 y = [0 for i in range(class_num)]
                 y[loc] = 1
@@ -115,7 +115,7 @@ class DataSet:
 
     def next_batch(self, batch_size):
         '''
-        获取size份数据
+        Get size data
         :param size: batchsize
         :return:
         '''
